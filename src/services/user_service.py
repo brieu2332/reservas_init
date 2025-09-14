@@ -38,6 +38,9 @@ class Iuser_service():
     
     def listar_minhas_reservas(self):
         raise NotImplementedError("Este método deve ser implementado por subclasses.")
+    
+    def get_user_by_id(self):
+        raise NotImplementedError("Este método deve ser implementado por subclasses.")
 
 
 class UserService:
@@ -73,6 +76,7 @@ class UserService:
             "is_active": self.acting_user.is_active,
             "type": self.acting_user.type,
         }
+    
 
     def atualizar_user(self, name: Optional[str] = None, email: Optional[str] = None, password: Optional[str] = None) -> Dict[str, Any]:
         """
@@ -131,6 +135,12 @@ class UserService:
     def listar_minhas_reservas(self) -> List[Reservation]:
         """Lista as reservas ativas do próprio usuário."""
         return self.reservation_repo.list_by_user(user_id=self.acting_user.id, active_only=True)
+    
+    #pede para o repositório buscar o user pelo id
+    def get_user_by_id(self, user_id: int) -> Optional[User]:
+        return self.user_repo.get_by_id(user_id)
+
+
     
     def __repr__(self) -> str:
         """Representação do objeto de serviço para facilitar a depuração."""

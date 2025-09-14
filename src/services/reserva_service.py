@@ -8,7 +8,7 @@ from ..models.user_models import User, Admin
 from ..models.reserva_models import Reserva
 from ..repositories.reserva_repositories import ReservaRepository
 from ..policies.reserva_policy import ReservaPolicy # Para verificações de visualização
-from ..utils.exceptions import BookingConflictError
+from ..utils.exceptions import BookingConflictError, NotFoundError
 
 class ReservaService:
     """
@@ -119,6 +119,27 @@ class ReservaService:
             raise PermissionError("Apenas administradores podem listar reservas de outros usuários.")
             
         return self.repo.list_by_user(user_id=target_user_id, active_only=False)
+    
+    def get_reservation_by_id(self, reservation_id: int) -> Reserva:
+        """
+        Busca uma única reserva pelo seu ID.
+        Levanta um erro se a reserva não for encontrada.
+        """
+        reserva = self.reserva_repo.get_by_id(reservation_id)
+        if not reserva:
+            raise NotFoundError("Reserva não encontrada.")
+        
+        return reserva
+
+    def get_reservations_by_filter(self, filters: Dict[str, Any]) -> List[Reserva]:
+        """
+        Busca uma lista de reservas com base em filtros (ex: por data, por sala).
+        Delega a lógica de filtragem para o repositório.
+        """
+                
+        return self.reserva_repo.list_by_filter(filters)
+    
+    
     
 
 

@@ -1,22 +1,16 @@
-# Em main.py ou onde você inicializa o Flask
+from flask import Flask
+# Importe o Blueprint que acabamos de criar
+from src.routes.reservation_routes import reservation_bp
 
-# em desenvolvimento
+app = Flask(__name__)
 
-from models.database import engine, Base
-from utils.seeding import seed_initial_rooms
-from sqlalchemy.orm import Session
+# Registre o Blueprint na sua aplicação
+app.register_blueprint(reservation_bp, url_prefix='/api') # Prefixo opcional para todas as rotas
 
-# ... seu código de criação do app Flask ...
+@app.route("/")
+def health_check():
+    return "API is running!"
 
-def init_db():
-    # Cria todas as tabelas definidas nos seus modelos
-    Base.metadata.create_all(bind=engine)
-    
-    # Abre uma sessão para popular os dados iniciais
-    with Session(engine) as session:
-        seed_initial_rooms(session)
-
-if __name__ == '__main__':
-    print("Inicializando banco de dados...")
-    init_db()
-    # app.run(...)
+if __name__ == "__main__":
+    # O ideal é usar um servidor WSGI como Gunicorn em produção
+    app.run(debug=True)
