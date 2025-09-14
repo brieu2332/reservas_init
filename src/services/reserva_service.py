@@ -8,6 +8,7 @@ from ..models.user_models import User, Admin
 from ..models.reserva_models import Reserva
 from ..repositories.reserva_repositories import ReservaRepository
 from ..policies.reserva_policy import ReservaPolicy # Para verificações de visualização
+from ..utils.exceptions import BookingConflictError
 
 class ReservaService:
     """
@@ -27,6 +28,18 @@ class ReservaService:
         Cria uma nova reserva para o usuário que está agindo (acting_user).
         Este é o método padrão para usuários comuns e admins que reservam para si mesmos.
         """
+
+        # --- LÓGICA DE NEGÓCIO: VERIFICAÇÃO DE CONFLITO ---
+        conflitos = self.repo.find_conflicting_reservations(
+            room_id=reserva_data['room_id'],
+            reservation_date=reserva_data['reservation_date'],
+            start_time=reserva_data['start_time'],
+            end_time=reserva_data['end_time']
+        )
+        if conflitos:
+            raise BookingConflictError(f"A sala já está reservada neste horário. Conflito com {len(conflitos)} reserva(s).")
+        # --- FIM DA VERIFICAÇÃO ---
+
         # Prepara o payload, garantindo que a reserva seja para o usuário logado.
         payload = reserva_data.copy()
         payload['user_id'] = self.acting_user.id
@@ -43,9 +56,21 @@ class ReservaService:
         :param target_user_id: O ID do usuário para quem a reserva será criada.
         :param reserva_data: Dicionário com os detalhes da reserva.
         """
-        # --- LÓGICA DE NEGÓCIO E SEGURANÇA ---
+        
         # 2. Se a política não levantou um erro, o serviço prossegue com a lógica de negócio
         self.policies.can_create_for_another_user(self.acting_user)
+
+        # --- LÓGICA DE NEGÓCIO E SEGURANÇA ---
+        conflitos = self.repo.find_conflicting_reservations(
+            room_id=reserva_data['room_id'],
+            reservation_date=reserva_data['reservation_date'],
+            start_time=reserva_data['start_time'],
+            end_time=reserva_data['end_time']
+        )
+        if conflitos:
+            raise BookingConflictError(f"A sala já está reservada neste horário. Conflito com {len(conflitos)} reserva(s).")
+        # --- FIM DA VERIFICAÇÃO ---
+
 
         # Prepara o payload, garantindo que a reserva seja para o usuário alvo.
         payload = reserva_data.copy()
@@ -94,3 +119,6 @@ class ReservaService:
             raise PermissionError("Apenas administradores podem listar reservas de outros usuários.")
             
         return self.repo.list_by_user(user_id=target_user_id, active_only=False)
+    
+
+

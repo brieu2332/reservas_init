@@ -55,7 +55,7 @@ class UserRepository:
         
         return new_user
 
-    def get_by_id(self, user_id: uuid.UUID) -> Optional[User]:
+    def get_by_id(self, user_id: int) -> Optional[User]:
         """Busca um usuário pelo seu UUID."""
         return self.db.query(User).filter(User.id == user_id).first()
 

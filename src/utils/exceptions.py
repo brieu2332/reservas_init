@@ -10,3 +10,7 @@ class DuplicateRoomError(Exception):
 class DuplicateEmailError(Exception):
     """Exceção para quando um email já está cadastrado"""
     pass
+
+class BookingConflictError(Exception):
+    """Exceção para quando uma reserva conflita com um horário existente."""
+    pass

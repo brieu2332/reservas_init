@@ -8,7 +8,8 @@ pip install sqlalchemy
 pip install argon2-cffi
 pip install -e .
 
-
+doc value:
+https://docs.google.com/document/d/16_M-l-JnciMGzSyPUIcSfdWmDDKdLer4_EWNYm5gDck/edit?tab=t.0#heading=h.dkix3zdpkg1a
 
 
 rodar:

@@ -1,11 +1,11 @@
 import enum
 from datetime import date, time, datetime
 from typing import List # Necessário para os relacionamentos com type hints
-import uuid 
 
 from sqlalchemy import (
     String,
     ForeignKey,
+    BigInteger,
     Enum as EnumDB, # Renomeando para evitar conflito com o enum do Python
     func # Para usar funções do SQL como NOW()
 )
@@ -14,8 +14,10 @@ from sqlalchemy.orm import (
     DeclarativeBase,
     Mapped,
     mapped_column,
-    relationship
+    relationship 
 )
+
+from ..utils.id_generator import generate_id
 
 # --- Base Declarativa para o SQLAlchemy 2.0 ---
 from .database import Base
@@ -34,9 +36,9 @@ class ReservationStatus(enum.Enum):
 class Reserva(Base):
     __tablename__ = "reservas"
 
-    id: Mapped[uuid.UUID] = mapped_column(PG_UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    id: Mapped[int] = mapped_column(BigInteger, primary_key=True, default=generate_id)
    
-    user_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("users.id"), nullable=False)
+    user_id: Mapped[int] = mapped_column(ForeignKey("users.id"), nullable=False)
     room_id: Mapped[int] = mapped_column(ForeignKey("rooms.id"), nullable=False)
     
     # Relacionamento para acessar os dados da sala (ex: reserva.room.name)

@@ -1,5 +1,4 @@
 import enum
-import uuid
 from typing import List
 
 # Base declarativa do SQLAlchemy
@@ -9,9 +8,11 @@ from sqlalchemy import (
     Boolean,
     String,
     Enum as EnumDB,
-    ForeignKey
+    ForeignKey,
+    BigInteger 
 )
 from sqlalchemy.dialects.postgresql import UUID as PG_UUID
+from ..utils.id_generator import generate_id
 from sqlalchemy.orm import (
     declarative_base,
     Mapped,
@@ -34,10 +35,10 @@ class User(Base):
     __tablename__ = "users"
 
     # --- Colunas da Tabela ---
-    id: Mapped[uuid.UUID] = mapped_column(
-        PG_UUID(as_uuid=True), 
+    id: Mapped[int] = mapped_column(
+        BigInteger, 
         primary_key=True, 
-        default=uuid.uuid4
+        default=generate_id
     )
     name: Mapped[str] = mapped_column(String(100), nullable=False)
     email: Mapped[str] = mapped_column(String(255), unique=True, index=True, nullable=False)

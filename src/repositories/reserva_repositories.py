@@ -2,8 +2,10 @@
 
 import uuid
 from typing import List, Optional, Dict, Any
+from datetime import date, time
 
 from sqlalchemy.orm import Session
+from sqlalchemy import and_
 
 from ..models.user_models import User, Admin
 from ..models.reserva_models import Reserva, ReservationStatus
@@ -19,11 +21,11 @@ class ReservaRepository:
         self.db = db_session
         self.policies = ReservaPolicy()
 
-    def get_by_id(self, reserva_id: uuid.UUID) -> Optional[Reserva]:
+    def get_by_id(self, reserva_id: int) -> Optional[Reserva]:
         """Busca uma reserva pelo seu ID."""
         return self.db.query(Reserva).filter(Reserva.id == reserva_id).first()
 
-    def list_by_user(self, user_id: uuid.UUID, active_only: bool = True) -> List[Reserva]:
+    def list_by_user(self, user_id: int, active_only: bool = True) -> List[Reserva]:
         """
         Lista as reservas de um usuário específico.
         - active_only=True: Retorna apenas reservas ativas (para usuários comuns).
@@ -71,3 +73,24 @@ class ReservaRepository:
         self.db.commit()
         self.db.refresh(reserva)
         return reserva
+
+    def find_conflicting_reservations(self, room_id: int, reservation_date: date, start_time: time, end_time: time) -> List[Reserva]:
+        """
+        Encontra reservas ativas para uma sala e data que conflitam com o novo horário.
+        Um conflito ocorre se:
+        - O início da nova reserva está durante uma reserva existente.
+        - O fim da nova reserva está durante uma reserva existente.
+        - A nova reserva "envolve" completamente uma reserva existente.
+        """
+        return self.db.query(Reserva).filter(
+            and_(
+                Reserva.room_id == room_id,
+                Reserva.reservation_date == reservation_date,
+                Reserva.status == ReservationStatus.ACTIVE,
+                # Condição de sobreposição de horários
+                and_(
+                    start_time < Reserva.end_time,
+                    end_time > Reserva.start_time
+                )
+            )
+        ).all()

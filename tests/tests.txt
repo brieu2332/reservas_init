@@ -1,0 +1,18 @@
+-v = mais detalhes na hr de rodar test
+-s = mais detalhes ao rodar os tests
+
+---
+pastas com tests funcionais:
+tests_respositories
+tests_repositories
+
+---
+arquivos para rodar no terminal:
+pytest -v -s tests/tests_repositories/room_test.py
+pytest -v -s tests/tests_repositories/reserva_test.py  
+pytest -v -s tests/tests_repositories/users_tests.py
+
+pytest -v -s tests/tests_services/conflitos_reservas_test.py
+
+---
+arquivo "confest.py", serve para controlar localmente no diretório como os tests interagem com o banco
