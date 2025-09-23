@@ -14,3 +14,11 @@ class DuplicateEmailError(Exception):
 class BookingConflictError(Exception):
     """Exceção para quando uma reserva conflita com um horário existente."""
     pass
+
+class PermissionError(Exception):
+    """Exceção para quando um usuário não tem permissão para uma ação."""
+    pass
+
+class NotFoundError(Exception):
+    """Exceção para quando um recurso não é encontrado no banco de dados."""
+    pass

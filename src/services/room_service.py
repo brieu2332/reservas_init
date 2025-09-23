@@ -4,7 +4,7 @@ from typing import List, Optional, Dict, Any
 from sqlalchemy.orm import Session
 
 from ..models.user_models import User, Admin
-from ..models.room_models import Room # <-- Correção de typo: 'room_models'
+from ..models.room_models import Room 
 from ..repositories.room_repositories import RoomRepository
 from ..utils.exceptions import DuplicateRoomError # Importa a exceção
 

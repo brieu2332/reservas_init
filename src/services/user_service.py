@@ -1,16 +1,14 @@
-# services/user_service.py
-
 from sqlalchemy.orm import Session
 from typing import Dict, Any, List, Optional
 
-# Importando todas as peças da nossa arquitetura
-from models.user_models import User, Admin, Reservation
-from repositories.user_repository import UserRepository
-from repositories import ReservationRepository # Supondo que exista
-from utils import hashing_senha
+#from models.user_models import User, Admin, Reserva
+from src.models.reserva_models import Reserva
+from src.repositories.user_repository import UserRepository
+from src.repositories.reserva_repositories import ReservaRepository
+from src.utils import hashing_senha
+from src.models.user_models import User, Admin
 
-# A interface Iuser_service é conceitual. A implementação focará nas classes concretas.
-# A inicialização original foi refatorada para um design mais limpo (ver __init__ abaixo).
+
 class Iuser_service():
     def __init__(self, id: str, name: str, email: str, hashed_password: str, is_active: bool = True, reservas_usuario: list = None):
         self.id = id
@@ -19,7 +17,7 @@ class Iuser_service():
         self.hashed_password = hashed_password
         self.is_active = is_active
         self.reservas_usuario = list(reservas_usuario) if reservas_usuario is not None else []
-    
+
     
     def atualizar_user(self):
         raise NotImplementedError("Este método deve ser implementado por subclasses.")
@@ -65,7 +63,7 @@ class UserService:
         
         # O serviço utiliza repositórios para acessar o banco de dados
         self.user_repo = UserRepository(self.db)
-        self.reservation_repo = ReservationRepository(self.db) # Supondo que este repo exista
+        self.reservation_repo = ReservaRepository(self.db) 
 
     def get_user(self) -> Dict[str, Any]:
         """Pega/consulta as próprias informações do usuário."""
@@ -101,7 +99,7 @@ class UserService:
         self.acting_user = updated_user # Atualiza o estado do serviço
         return self.get_user()
 
-    def fazer_reserva(self, reservation_data: Dict[str, Any]) -> Reservation:
+    def fazer_reserva(self, reservation_data: Dict[str, Any]) -> Reserva:
         """
         Faz uma reserva. A verificação de permissão (política) é delegada
         para a camada de repositório/serviço da reserva.
@@ -121,7 +119,7 @@ class UserService:
         # O método delete do repositório deve chamar a política para garantir a permissão
         self.reservation_repo.delete(self.acting_user, reservation)
 
-    def atualizar_reserva(self, reservation_id: int, update_data: Dict[str, Any]) -> Reservation:
+    def atualizar_reserva(self, reservation_id: int, update_data: Dict[str, Any]) -> Reserva:
         """
         Atualiza os dados de uma reserva. A permissão é verificada na camada inferior.
         """
@@ -132,7 +130,7 @@ class UserService:
         # O método update do repositório deve chamar a política
         return self.reservation_repo.update(self.acting_user, reservation, update_data)
 
-    def listar_minhas_reservas(self) -> List[Reservation]:
+    def listar_minhas_reservas(self) -> List[Reserva]:
         """Lista as reservas ativas do próprio usuário."""
         return self.reservation_repo.list_by_user(user_id=self.acting_user.id, active_only=True)
     
@@ -161,7 +159,7 @@ class AdminService(UserService):
         target_user = self.user_repo.get_by_id(target_user_id)
         if not target_user:
             return None
-        # SUGESTÃO: Poderíamos ter uma UserPolicy para verificar se este admin pode ver aquele usuário
+        
         return {
             "id": target_user.id,
             "name": target_user.name,
@@ -177,9 +175,7 @@ class AdminService(UserService):
         target_user = self.user_repo.get_by_id(target_user_id)
         if not target_user:
             raise ValueError("Usuário alvo não encontrado.")
-            
-        # A política seria chamada aqui: self.user_policy.can_update(self.acting_user, target_user)
-        
+                    
         updated_user = self.user_repo.update_user(target_user, update_data)
         return { "id": updated_user.id, "name": updated_user.name, "email": updated_user.email }
 
@@ -188,18 +184,16 @@ class AdminService(UserService):
         Remove (desativa) a reserva de outro usuário. A política de reserva já
         concede essa permissão a administradores.
         """
-        # A lógica é a mesma que cancelar a própria reserva, pois a política
-        # dentro do repositório tratará a permissão do admin corretamente.
         self.cancelar_reserva(reservation_id)
 
-    def atualizar_reserva_de_outro(self, reservation_id: int, update_data: Dict[str, Any]) -> Reservation:
+    def atualizar_reserva_de_outro(self, reservation_id: int, update_data: Dict[str, Any]) -> Reserva:
         """
         Atualiza a reserva de outro usuário. A política dentro do repositório
         dará ao admin a permissão necessária.
         """
         return self.atualizar_reserva(reservation_id, update_data)
 
-    def listar_reservas_outros(self, target_user_id: str) -> List[Reservation]:
+    def listar_reservas_outros(self, target_user_id: str) -> List[Reserva]:
         """
         Lista todas as reservas de outro usuário (ativas e inativas).
         """

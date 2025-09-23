@@ -12,7 +12,8 @@ from sqlalchemy import (
     BigInteger 
 )
 from sqlalchemy.dialects.postgresql import UUID as PG_UUID
-from ..utils.id_generator import generate_id
+#from ..utils.id_generator import generate_id
+from src.utils.id_generator import generate_id
 from sqlalchemy.orm import (
     declarative_base,
     Mapped,
