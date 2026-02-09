@@ -1,0 +1,56 @@
+Pré-requisitos
+Banco de Dados: Certifique-se de que o banco de dados de produção foi criado. Se não, execute o script de setup uma vez:
+
+Bash
+
+# Na pasta raiz do projeto (padrõres2)
+venv\Scripts\activate
+set PYTHONPATH=src
+python setup_producao.py
+Configuração da API do Front-end: Verifique se o front-end está apontando para o seu back-end local.
+
+Arquivo: frontEnd/api.js
+
+Garanta que a primeira linha seja: const API_URL = "http://localhost:5000";
+
+Passo a Passo para Execução
+Você precisará de dois terminais abertos simultaneamente.
+
+1. Rodar o Back-end (Servidor da API)
+Abra o Terminal 1.
+
+Navegue até a pasta raiz do projeto (padrõres2).
+
+Execute os seguintes comandos em sequência:
+
+Bash
+
+# 1. Ative o ambiente virtual
+venv\Scripts\activate
+
+# 2. Configure o PYTHONPATH
+set PYTHONPATH=src
+
+# 3. Inicie o servidor Flask
+python -m flask --app main run --debug
+O back-end estará rodando em http://127.0.0.1:5000. Mantenha este terminal aberto.
+
+2. Rodar o Front-end (Protótipo)
+Abra o Terminal 2.
+
+Navegue até a pasta do protótipo do front-end:
+
+Bash
+
+cd frontEnd/01-prototipo-interface
+Execute o comando para iniciar o servidor web simples:
+
+Bash
+
+python -m http.server
+O front-end estará rodando em http://localhost:8000. Mantenha este terminal aberto.
+
+3. Acessar a Aplicação
+Abra seu navegador de internet.
+
+Acesse o endereço do front-end: http://localhost:8000
