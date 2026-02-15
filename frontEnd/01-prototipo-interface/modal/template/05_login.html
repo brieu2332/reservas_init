@@ -5,18 +5,19 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Tela de Login</title>
-  <link rel="stylesheet" href="05_css/05_login.css" />
+  
+  <link rel="stylesheet" href="{{ url_for('static', filename='modal/css/05_login.css') }}" />
 </head>
 
 <body>
   <header class="navbar">
     <nav class="nav-buttons">
-      <a href="01_index.html">Diária</a>
-      <a href="02_visao_semanal.html">Semanal</a>
-      <a href="10_listagem_reservas.html">Listagem</a>
-      <a href="03_04_reservar.html">Reservar</a>
-      <a href="09_admin.html">Admin</a>
-      <a href="06_primeiro_acesso.html">Primeiro Acesso</a>
+      <a href="{{ url_for('diaria') }}">Diária</a>
+      <a href="{{ url_for('semanal') }}">Semanal</a>
+      <a href="{{ url_for('listagem') }}">Listagem</a>
+      <a href="{{ url_for('reservar') }}">Reservar</a>
+      <a href="{{ url_for('admin') }}">Admin</a>
+      <a href="{{ url_for('primeiro_acesso') }}">Primeiro Acesso</a>
     </nav>
   </header>
 
@@ -31,53 +32,56 @@
 
         <div id="telaLogin">
           <h2>Entrar</h2>
-          <form class="login-form">
+          
+          <form class="login-form" action="{{ url_for('login_submit') }}" method="POST">
             <div class="form-group">
               <label for="usuario">Email</label>
-              <input type="text" id="usuario" placeholder="Digite seu @ifc.edu.br" />
+              <input type="text" id="usuario" name="email" placeholder="Digite seu @ifc.edu.br" required />
             </div>
             <div class="form-group">
               <label for="senha">Senha</label>
-              <input type="password" id="senha" placeholder="Digite sua senha" />
+              <input type="password" id="senha" name="senha" placeholder="Digite sua senha" required />
             </div>
-            <button type="button" class="login-btn">Entrar</button>
+            <button type="submit" class="login-btn">Entrar</button>
           </form>
 
           <div class="links-auxiliares">
             <a href="#" id="linkEsqueciSenha">Esqueci minha senha</a>
             <p>Não tem conta? <a href="#" id="linkCadastro">Cadastre-se</a></p>
-            <p><a href="#" id="linkSemLogin">Entrar sem login</a></p>
+            <p><a href="{{ url_for('diaria') }}" id="linkSemLogin">Entrar sem login</a></p>
           </div>
         </div>
 
         <div id="telaCadastro" class="hidden">
           <h2>Cadastrar</h2>
-          <form class="login-form">
+          
+          <form class="login-form" action="{{ url_for('cadastro_submit') }}" method="POST">
             <div class="form-group">
               <label for="nome">Nome</label>
-              <input type="text" id="nome" />
+              <input type="text" id="nome" name="nome" required />
             </div>
             <div class="form-group">
               <label for="email">Email</label>
-              <input type="email" id="email" />
+              <input type="email" id="emailCadastro" name="email" required />
             </div>
             <div class="form-group">
               <label for="senhaCadastro">Senha</label>
-              <input type="password" id="senhaCadastro" />
+              <input type="password" id="senhaCadastro" name="senha" required />
             </div>
-            <button type="button" class="login-btn">Cadastrar</button>
+            <button type="submit" class="login-btn">Cadastrar</button>
           </form>
           <a href="#" id="voltarLogin1">&larr; Voltar para login</a>
         </div>
 
         <div id="telaEsqueciSenha" class="hidden">
           <h2>Recuperar Senha</h2>
-          <form class="login-form">
+          
+          <form class="login-form" action="{{ url_for('enviar_recuperacao') }}" method="POST">
             <div class="form-group">
               <label for="emailRecuperar">Email</label>
-              <input type="email" id="emailRecuperar" />
+              <input type="email" id="emailRecuperar" name="email" required />
             </div>
-            <button type="button" class="login-btn">Enviar</button>
+            <button type="submit" class="login-btn">Enviar</button>
           </form>
           <a href="#" id="voltarLogin2">&larr; Voltar para login</a>
         </div>
@@ -86,7 +90,7 @@
     </div>
   </main>
 
-  <script type="module" src="05_js/modal-controller.js"></script>
+  <script type="module" src="{{ url_for('static', filename='modal/js/modal-controller.js') }}"></script>
 </body>
 
 </html>

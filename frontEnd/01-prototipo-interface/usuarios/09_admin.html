@@ -4,8 +4,10 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Admin</title>
+  
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <script src="https://cdn.tailwindcss.com"></script>
+  
   <style>
     :root {
       --verde-principal: #37966F;
@@ -14,20 +16,17 @@
       --fundo-pagina: #EEF9F2;
     }
   </style>
-  
-  
-  
 </head>
 
 <body class="bg-[var(--fundo-pagina)] min-h-screen p-6">
 
 <div class="flex justify-center flex-wrap gap-4 mb-8">
-  <a href="/SIRA/01-prototipo-interface/tabelas/01_index.html" class="px-4 py-2 bg-[var(--verde-claro-botao)] text-black font-semibold rounded-md shadow hover:bg-[var(--verde-principal)] hover:text-white transition">Diária</a>
-  <a href="/SIRA/01-prototipo-interface/tabelas/02_visao_semanal.html" class="px-4 py-2 bg-[var(--verde-claro-botao)] text-black font-semibold rounded-md shadow hover:bg-[var(--verde-principal)] hover:text-white transition">Semanal</a>
-  <a href="/SIRA/01-prototipo-interface/reserva/10_listagem_reservas.html" class="px-4 py-2 bg-[var(--verde-claro-botao)] text-black font-semibold rounded-md shadow hover:bg-[var(--verde-principal)] hover:text-white transition">Listagem</a>
-  <a href="/SIRA/01-prototipo-interface/reserva/03_04_reservar.html" class="px-4 py-2 bg-[var(--verde-claro-botao)] text-black font-semibold rounded-md shadow hover:bg-[var(--verde-principal)] hover:text-white transition">Reservar</a>
-  <a href="/SIRA/01-prototipo-interface/usuarios/09_admin.html" class="px-4 py-2 bg-[var(--verde-claro-botao)] text-black font-semibold rounded-md shadow hover:bg-[var(--verde-principal)] hover:text-white transition">Admin</a>
-  <a href="/SIRA/01-prototipo-interface/login/06_primeiro_acesso.html" class="px-4 py-2 bg-[var(--verde-claro-botao)] text-black font-semibold rounded-md shadow hover:bg-[var(--verde-principal)] hover:text-white transition">Primeiro Acesso</a>
+  <a href="{{ url_for('diaria') }}" class="px-4 py-2 bg-[var(--verde-claro-botao)] text-black font-semibold rounded-md shadow hover:bg-[var(--verde-principal)] hover:text-white transition">Diária</a>
+  <a href="{{ url_for('semanal') }}" class="px-4 py-2 bg-[var(--verde-claro-botao)] text-black font-semibold rounded-md shadow hover:bg-[var(--verde-principal)] hover:text-white transition">Semanal</a>
+  <a href="{{ url_for('listagem') }}" class="px-4 py-2 bg-[var(--verde-claro-botao)] text-black font-semibold rounded-md shadow hover:bg-[var(--verde-principal)] hover:text-white transition">Listagem</a>
+  <a href="{{ url_for('reservar') }}" class="px-4 py-2 bg-[var(--verde-claro-botao)] text-black font-semibold rounded-md shadow hover:bg-[var(--verde-principal)] hover:text-white transition">Reservar</a>
+  <a href="{{ url_for('admin') }}" class="px-4 py-2 bg-[var(--verde-claro-botao)] text-black font-semibold rounded-md shadow hover:bg-[var(--verde-principal)] hover:text-white transition">Admin</a>
+  <a href="{{ url_for('primeiro_acesso') }}" class="px-4 py-2 bg-[var(--verde-claro-botao)] text-black font-semibold rounded-md shadow hover:bg-[var(--verde-principal)] hover:text-white transition">Primeiro Acesso</a>
 </div>
 
 <section class="mb-12 text-center">
@@ -35,7 +34,8 @@
   <div class="bg-white p-6 rounded-lg shadow-md max-w-xl mx-auto">
     <h2 class="text-xl font-semibold text-[var(--verde-principal)] mb-2">Usuários</h2>
     <p id="user-count" class="mb-2 text-gray-700">0 Usuários cadastrados.</p>
-    <a href="/SIRA/01-prototipo-interface/usuarios/07_usuarios.html" class="text-[var(--verde-principal)] font-semibold hover:underline">Cadastro de Usuários</a>
+    
+    <a href="{{ url_for('usuarios') }}" class="text-[var(--verde-principal)] font-semibold hover:underline">Cadastro de Usuários</a>
   </div>
 </section>
 
@@ -84,6 +84,9 @@
       $("#pray").classList.add("opacity-0")
     }
 
+    // --- LÓGICA DE WHITELIST (Front-end apenas) ---
+    // Nota: Em um sistema real, estas funções chamariam o backend via fetch()
+    
     function insert_to_whitelist_event() {
       const pattern = $("#pattern").value.trim();
       const permission = $("#permission").value;
@@ -150,7 +153,7 @@
       update_user_count();
     }
 
-    // Dados iniciais
+    // Dados iniciais de exemplo
     insert_to_whitelist("gabriel@gmail.com", "Admin");
     insert_to_whitelist("*@ifc.edu.br", "Reservador");
     insert_to_whitelist("default", "Visitante");

@@ -4,46 +4,52 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Configurações</title>
-  <link rel="stylesheet" href="/SIRA/01-prototipo-interface/usuarios/08_editar_usuario.css" />
+  
+  <link rel="stylesheet" href="{{ url_for('static', filename='usuarios/08_editar_usuario.css') }}" />
 </head>
 <body>
   <div class="config-modal">
     <button class="close-btn" onclick="fecharConfiguracoes()">✖</button>
+    
     <h2>Configurações da Conta</h2>
 
-    <form class="config-form" action="01_index.html">
+    <form class="config-form" action="{{ url_for('atualizar_usuario') }}" method="POST" enctype="multipart/form-data">
 
       <div class="form-group">
         <label>Usuário Atual</label>
-        <input type="text" placeholder="Digite o nome de usuário atual" />
+        <input type="text" name="usuario_atual" placeholder="Digite o nome de usuário atual" />
+        
         <label>Novo Usuário</label>
-        <input type="text" placeholder="Digite o novo nome de usuário" />
+        <input type="text" name="novo_usuario" placeholder="Digite o novo nome de usuário" />
       </div>
 
       <div class="form-group">
         <label>Email Atual</label>
-        <input type="email" placeholder="Digite o e-mail atual" />
+        <input type="email" name="email_atual" placeholder="Digite o e-mail atual" />
+        
         <label>Novo Email</label>
-        <input type="email" placeholder="Digite o novo e-mail" />
+        <input type="email" name="novo_email" placeholder="Digite o novo e-mail" />
       </div>
 
       <div class="form-group">
         <label>Senha Atual</label>
-        <input type="password" placeholder="Digite a senha atual" />
+        <input type="password" name="senha_atual" placeholder="Digite a senha atual" />
+        
         <label>Nova Senha</label>
-        <input type="password" placeholder="Digite a nova senha" />
+        <input type="password" name="nova_senha" placeholder="Digite a nova senha" />
+        
         <label>Confirmar Nova Senha</label>
-        <input type="password" placeholder="Confirme a nova senha" />
+        <input type="password" name="confirmar_senha" placeholder="Confirme a nova senha" />
       </div>
 
       <div class="form-group">
         <label>Nova Foto de Perfil</label>
-        <input type="file" accept="image/*" />
+        <input type="file" name="foto_perfil" accept="image/*" />
       </div>
 
       <div class="form-group">
         <label>Página Inicial</label>
-        <select>
+        <select name="pagina_inicial">
           <option value="dashboard">Dashboard</option>
           <option value="reservas">Reservas</option>
           <option value="perfil">Perfil</option>
@@ -54,7 +60,7 @@
 
       <div class="form-group">
         <label>Tema</label>
-        <select>
+        <select name="tema">
           <option value="claro">Claro</option>
           <option value="escuro">Escuro</option>
         </select>
@@ -66,7 +72,8 @@
 
   <script>
     function fecharConfiguracoes() {
-      window.location.href = "01_index.html";
+      // 4. CORREÇÃO: Redireciona para a rota Python
+      window.location.href = "{{ url_for('diaria') }}";
     }
   </script>
 </body>

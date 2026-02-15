@@ -4,12 +4,14 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Configurações</title>
-  <link rel="stylesheet" href="/SIRA/01-prototipo-interface/usuarios/08_styles_cadastro.css" />
+  
+  <link rel="stylesheet" href="{{ url_for('static', filename='usuarios/08_styles_cadastro.css') }}" />
 </head>
 
 <body>
     <div class="container">
-      <a href="/SIRA/01-prototipo-interface/usuarios/09_admin.html" class="return-link">← Retornar à página do admin</a>
+      <a href="{{ url_for('admin') }}" class="return-link">← Retornar à página do admin</a>
+      
       <h1>Configurações de Usuários</h1>
   
       <table class="user-table">

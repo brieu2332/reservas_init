@@ -4,7 +4,8 @@
     <meta charset="UTF-8" />
     <title>Reservas</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
-    <link rel="stylesheet" href="/SIRA/01-prototipo-interface/tabelas/01_index_tela_inicial.css">
+    
+    <link rel="stylesheet" href="{{ url_for('static', filename='tabelas/01_index_tela_inicial.css') }}">
     
   </head>
   <body>
@@ -12,12 +13,12 @@
     <header>
         <h1>SIRA</h1>
         Reservas:
-        <a href="/SIRA/01-prototipo-interface/tabelas/01_index.html">Diária</a> |
-        <a href="/SIRA/01-prototipo-interface/tabelas/02_visao_semanal.html">Semanal</a> |
-        <a href="/SIRA/01-prototipo-interface/reserva/10_listagem_reservas.html">Listagem</a> | 
-        <a href="/SIRA/01-prototipo-interface/reserva/03_04_reservar.html">RESERVAR!</a> <br>
-        <a href="/SIRA/01-prototipo-interface/usuarios/09_admin.html">Admin (apenas para usuários com esse papel)</a> |
-        <a href="/SIRA/01-prototipo-interface/login/06_primeiro_acesso.html">Primeiro Acesso</a>
+        <a href="{{ url_for('diaria') }}">Diária</a> |
+        <a href="{{ url_for('semanal') }}">Semanal</a> |
+        <a href="{{ url_for('listagem') }}">Listagem</a> | 
+        <a href="{{ url_for('reservar') }}">RESERVAR!</a> <br>
+        <a href="{{ url_for('admin') }}">Admin (apenas para usuários com esse papel)</a> |
+        <a href="{{ url_for('primeiro_acesso') }}">Primeiro Acesso</a>
     </header>
     
 
@@ -74,7 +75,7 @@
 
     <button class="tooltip adicionar-reserva-btn">
         <i class="fas fa-plus fa-lg"></i>
-        <span class="tooltiptext"><a href="/SIRA/01-prototipo-interface/reserva/03_04_reservar.html">Adicionar reserva</a></span>
+        <span class="tooltiptext"><a href="{{ url_for('reservar') }}">Adicionar reserva</a></span>
     </button>
       
     <script>
@@ -170,105 +171,102 @@
           });
         }
       
-        // Exemplo de reservas para uma data fixa
+        // Exemplo de reservas para uma data fixa (MANTIDO DO ORIGINAL)
         reservasPorData["14/04/2025"] = [
-  { coluna: 1, inicio: "08:00", fim: "10:11", turma: "101", materia: "Web Design", professor: "Shirlei" },
-  { coluna: 2, inicio: "10:05", fim: "12:00", turma: "102", materia: "Lógica de Programação", professor: "Rodacki" },
-  { coluna: 3, inicio: "13:10", fim: "15:25", turma: "201", materia: "Banco de Dados", professor: "Hermano" },
-];
+          { coluna: 1, inicio: "08:00", fim: "10:11", turma: "101", materia: "Web Design", professor: "Shirlei" },
+          { coluna: 2, inicio: "10:05", fim: "12:00", turma: "102", materia: "Lógica de Programação", professor: "Rodacki" },
+          { coluna: 3, inicio: "13:10", fim: "15:25", turma: "201", materia: "Banco de Dados", professor: "Hermano" },
+        ];
 
-reservasPorData["15/04/2025"] = [
-  { coluna: 1, inicio: "08:15", fim: "09:45", turma: "301", materia: "Programação 2", professor: "Edwin" },
-  { coluna: 2, inicio: "10:10", fim: "11:55", turma: "202", materia: "Desenvolvimento de Projeto 1", professor: "Pizzini" },
-  { coluna: 3, inicio: "13:35", fim: "15:05", turma: "302", materia: "Desenvolvimento de Projeto 2", professor: "Uriarte" },
-];
+        reservasPorData["15/04/2025"] = [
+          { coluna: 1, inicio: "08:15", fim: "09:45", turma: "301", materia: "Programação 2", professor: "Edwin" },
+          { coluna: 2, inicio: "10:10", fim: "11:55", turma: "202", materia: "Desenvolvimento de Projeto 1", professor: "Pizzini" },
+          { coluna: 3, inicio: "13:35", fim: "15:05", turma: "302", materia: "Desenvolvimento de Projeto 2", professor: "Uriarte" },
+        ];
 
-reservasPorData["16/04/2025"] = [
-  { coluna: 1, inicio: "08:20", fim: "10:30", turma: "102", materia: "Lógica de Programação", professor: "Rodacki" },
-  { coluna: 2, inicio: "11:10", fim: "12:40", turma: "201", materia: "Banco de Dados", professor: "Hermano" },
-  { coluna: 4, inicio: "18:15", fim: "20:25", turma: "301", materia: "Tópicos Avançados em Web", professor: "Hylson" },
-];
+        reservasPorData["16/04/2025"] = [
+          { coluna: 1, inicio: "08:20", fim: "10:30", turma: "102", materia: "Lógica de Programação", professor: "Rodacki" },
+          { coluna: 2, inicio: "11:10", fim: "12:40", turma: "201", materia: "Banco de Dados", professor: "Hermano" },
+          { coluna: 4, inicio: "18:15", fim: "20:25", turma: "301", materia: "Tópicos Avançados em Web", professor: "Hylson" },
+        ];
 
-reservasPorData["17/04/2025"] = [
-  { coluna: 2, inicio: "08:05", fim: "09:50", turma: "101", materia: "Web Design", professor: "Shirlei" },
-  { coluna: 3, inicio: "10:30", fim: "12:00", turma: "302", materia: "Desenvolvimento de Projeto 2", professor: "Uriarte" },
-  { coluna: 4, inicio: "19:20", fim: "21:15", turma: "301", materia: "Programação 2", professor: "Edwin" },
-];
+        reservasPorData["17/04/2025"] = [
+          { coluna: 2, inicio: "08:05", fim: "09:50", turma: "101", materia: "Web Design", professor: "Shirlei" },
+          { coluna: 3, inicio: "10:30", fim: "12:00", turma: "302", materia: "Desenvolvimento de Projeto 2", professor: "Uriarte" },
+          { coluna: 4, inicio: "19:20", fim: "21:15", turma: "301", materia: "Programação 2", professor: "Edwin" },
+        ];
 
-reservasPorData["18/04/2025"] = [
-  { coluna: 1, inicio: "08:10", fim: "09:55", turma: "201", materia: "Banco de Dados", professor: "Hermano" },
-  { coluna: 2, inicio: "10:25", fim: "11:40", turma: "202", materia: "Desenvolvimento de Projeto 1", professor: "Pizzini" },
-  { coluna: 3, inicio: "13:05", fim: "14:50", turma: "101", materia: "Web Design", professor: "Shirlei" },
-];
+        reservasPorData["18/04/2025"] = [
+          { coluna: 1, inicio: "08:10", fim: "09:55", turma: "201", materia: "Banco de Dados", professor: "Hermano" },
+          { coluna: 2, inicio: "10:25", fim: "11:40", turma: "202", materia: "Desenvolvimento de Projeto 1", professor: "Pizzini" },
+          { coluna: 3, inicio: "13:05", fim: "14:50", turma: "101", materia: "Web Design", professor: "Shirlei" },
+        ];
 
-reservasPorData["22/04/2025"] = [
-  { coluna: 1, inicio: "08:30", fim: "09:45", turma: "102", materia: "Lógica de Programação", professor: "Rodacki" },
-  { coluna: 2, inicio: "10:15", fim: "11:55", turma: "201", materia: "Banco de Dados", professor: "Hermano" },
-  { coluna: 4, inicio: "18:40", fim: "20:10", turma: "302", materia: "Desenvolvimento de Projeto 2", professor: "Uriarte" },
-];
+        reservasPorData["22/04/2025"] = [
+          { coluna: 1, inicio: "08:30", fim: "09:45", turma: "102", materia: "Lógica de Programação", professor: "Rodacki" },
+          { coluna: 2, inicio: "10:15", fim: "11:55", turma: "201", materia: "Banco de Dados", professor: "Hermano" },
+          { coluna: 4, inicio: "18:40", fim: "20:10", turma: "302", materia: "Desenvolvimento de Projeto 2", professor: "Uriarte" },
+        ];
 
-reservasPorData["25/04/2025"] = [
-  { coluna: 2, inicio: "09:10", fim: "10:45", turma: "101", materia: "Web Design", professor: "Shirlei" },
-  { coluna: 3, inicio: "11:05", fim: "12:30", turma: "202", materia: "Desenvolvimento de Projeto 1", professor: "Pizzini" },
-  { coluna: 4, inicio: "13:45", fim: "15:15", turma: "301", materia: "Tópicos Avançados em Web", professor: "Hylson" },
-];
+        reservasPorData["25/04/2025"] = [
+          { coluna: 2, inicio: "09:10", fim: "10:45", turma: "101", materia: "Web Design", professor: "Shirlei" },
+          { coluna: 3, inicio: "11:05", fim: "12:30", turma: "202", materia: "Desenvolvimento de Projeto 1", professor: "Pizzini" },
+          { coluna: 4, inicio: "13:45", fim: "15:15", turma: "301", materia: "Tópicos Avançados em Web", professor: "Hylson" },
+        ];
 
-reservasPorData["30/04/2025"] = [
-  { coluna: 1, inicio: "08:25", fim: "10:00", turma: "301", materia: "Programação 2", professor: "Edwin" },
-  { coluna: 3, inicio: "10:20", fim: "12:05", turma: "102", materia: "Lógica de Programação", professor: "Rodacki" },
-  { coluna: 4, inicio: "13:10", fim: "15:00", turma: "201", materia: "Banco de Dados", professor: "Hermano" },
-];
+        reservasPorData["30/04/2025"] = [
+          { coluna: 1, inicio: "08:25", fim: "10:00", turma: "301", materia: "Programação 2", professor: "Edwin" },
+          { coluna: 3, inicio: "10:20", fim: "12:05", turma: "102", materia: "Lógica de Programação", professor: "Rodacki" },
+          { coluna: 4, inicio: "13:10", fim: "15:00", turma: "201", materia: "Banco de Dados", professor: "Hermano" },
+        ];
 
-reservasPorData["06/05/2025"] = [
-  { coluna: 1, inicio: "08:45", fim: "10:15", turma: "301", materia: "Tópicos Avançados em Web", professor: "Hylson" },
-  { coluna: 2, inicio: "10:30", fim: "12:20", turma: "302", materia: "Desenvolvimento de Projeto 2", professor: "Uriarte" },
-  { coluna: 4, inicio: "18:25", fim: "20:15", turma: "202", materia: "Desenvolvimento de Projeto 1", professor: "Pizzini" },
-];
+        reservasPorData["06/05/2025"] = [
+          { coluna: 1, inicio: "08:45", fim: "10:15", turma: "301", materia: "Tópicos Avançados em Web", professor: "Hylson" },
+          { coluna: 2, inicio: "10:30", fim: "12:20", turma: "302", materia: "Desenvolvimento de Projeto 2", professor: "Uriarte" },
+          { coluna: 4, inicio: "18:25", fim: "20:15", turma: "202", materia: "Desenvolvimento de Projeto 1", professor: "Pizzini" },
+        ];
 
-reservasPorData["10/05/2025"] = [
-  { coluna: 2, inicio: "08:15", fim: "09:35", turma: "101", materia: "Web Design", professor: "Shirlei" },
-  { coluna: 3, inicio: "10:00", fim: "11:45", turma: "201", materia: "Banco de Dados", professor: "Hermano" },
-  { coluna: 4, inicio: "13:10", fim: "14:50", turma: "301", materia: "Programação 2", professor: "Edwin" },
-];
+        reservasPorData["10/05/2025"] = [
+          { coluna: 2, inicio: "08:15", fim: "09:35", turma: "101", materia: "Web Design", professor: "Shirlei" },
+          { coluna: 3, inicio: "10:00", fim: "11:45", turma: "201", materia: "Banco de Dados", professor: "Hermano" },
+          { coluna: 4, inicio: "13:10", fim: "14:50", turma: "301", materia: "Programação 2", professor: "Edwin" },
+        ];
 
-reservasPorData["14/05/2025"] = [
-  { coluna: 1, inicio: "08:05", fim: "09:50", turma: "102", materia: "Lógica de Programação", professor: "Rodacki" },
-  { coluna: 2, inicio: "10:20", fim: "11:50", turma: "201", materia: "Banco de Dados", professor: "Hermano" },
-  { coluna: 3, inicio: "13:25", fim: "15:00", turma: "302", materia: "Desenvolvimento de Projeto 2", professor: "Uriarte" },
-];
+        reservasPorData["14/05/2025"] = [
+          { coluna: 1, inicio: "08:05", fim: "09:50", turma: "102", materia: "Lógica de Programação", professor: "Rodacki" },
+          { coluna: 2, inicio: "10:20", fim: "11:50", turma: "201", materia: "Banco de Dados", professor: "Hermano" },
+          { coluna: 3, inicio: "13:25", fim: "15:00", turma: "302", materia: "Desenvolvimento de Projeto 2", professor: "Uriarte" },
+        ];
       
         carregarReservas(); // Carrega reservas da data atual ao iniciar
 
-        
+    </script>
 
-      </script>
-
-<script>
-  // Atualizar a exibição dos horários conforme o turno selecionado
-  const checkboxesTurno = document.querySelectorAll('.filtro-turno');
-  checkboxesTurno.forEach(checkbox => {
-    checkbox.addEventListener('change', filtrarTurnos);
-  });
-  
-  function filtrarTurnos() {
-    const corpoTabela = document.getElementById('corpo-tabela');
-    const linhas = corpoTabela.getElementsByTagName('tr');
-  
-    for (let linha of linhas) {
-      const hora = parseInt(linha.firstChild.textContent.replace('h', ''));
-      let mostrar = false;
+    <script>
+      // Atualizar a exibição dos horários conforme o turno selecionado
+      const checkboxesTurno = document.querySelectorAll('.filtro-turno');
+      checkboxesTurno.forEach(checkbox => {
+        checkbox.addEventListener('change', filtrarTurnos);
+      });
       
-      if (hora >= 8 && hora < 12 && document.querySelector('input[value="manha"]').checked) mostrar = true;
-      if (hora >= 13 && hora < 17 && document.querySelector('input[value="tarde"]').checked) mostrar = true;
-      if (hora >= 18 && hora <= 23 && document.querySelector('input[value="noite"]').checked) mostrar = true;
-  
-      linha.style.display = mostrar ? '' : 'none';
-    }
-  }
-  
-  filtrarTurnos();
-  </script>
-  
+      function filtrarTurnos() {
+        const corpoTabela = document.getElementById('corpo-tabela');
+        const linhas = corpoTabela.getElementsByTagName('tr');
+      
+        for (let linha of linhas) {
+          const hora = parseInt(linha.firstChild.textContent.replace('h', ''));
+          let mostrar = false;
+          
+          if (hora >= 8 && hora < 12 && document.querySelector('input[value="manha"]').checked) mostrar = true;
+          if (hora >= 13 && hora < 17 && document.querySelector('input[value="tarde"]').checked) mostrar = true;
+          if (hora >= 18 && hora <= 23 && document.querySelector('input[value="noite"]').checked) mostrar = true;
+      
+          linha.style.display = mostrar ? '' : 'none';
+        }
+      }
+      
+      filtrarTurnos();
+    </script>
       
   </body>
 </html>

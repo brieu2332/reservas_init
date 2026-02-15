@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <title>Histórico de Alocações</title>
-  <link rel="stylesheet" href="/SIRA/01-prototipo-interface/reserva/10_listagem.css" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='reserva/10_listagem.css') }}" />
 </head>
 
 <body>
@@ -12,12 +12,12 @@
   <h2>Histórico de Alocações</h2>
 
   <nav>
-    <a href="/SIRA/01-prototipo-interface/tabelas/01_index.html">Diária</a> 
-    <a href="/SIRA/01-prototipo-interface/tabelas/02_visao_semanal.html">Semanal</a> 
-    <a href="/SIRA/01-prototipo-interface/reserva/10_listagem_reservas.html">Listagem</a> 
-    <a href="/SIRA/01-prototipo-interface/reserva/03_04_reservar.html">Reservar</a>
-    <a href="/SIRA/01-prototipo-interface/usuarios/09_admin.html">Admin</a>
-    <a href="/SIRA/01-prototipo-interface/login/06_primeiro_acesso.html">Primeiro Acesso</a>
+    <a href="{{ url_for('diaria') }}">Diária</a> 
+    <a href="{{ url_for('semanal') }}">Semanal</a> 
+    <a href="{{ url_for('listagem') }}">Listagem</a> 
+    <a href="{{ url_for('reservar') }}">Reservar</a>
+    <a href="{{ url_for('admin') }}">Admin</a>
+    <a href="{{ url_for('primeiro_acesso') }}">Primeiro Acesso</a>
   </nav>
 
   <div class="search-bar">
