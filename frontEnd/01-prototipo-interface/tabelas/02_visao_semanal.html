@@ -23,11 +23,11 @@
     </nav>
   </header>
 
-  
+  <h2 class="page-title">Visualização Semanal</h2>
+
   <main>
     <section class="controle-data">
       <div class="filtros-turno" style="text-align: center; margin-bottom: 20px;">
-        <h2 class="page-title">Visualização Semanal</h2>
         <label><input type="checkbox" class="filtro-turno" value="manha" checked> Manhã</label>
         <label><input type="checkbox" class="filtro-turno" value="tarde" checked> Tarde</label>
         <label><input type="checkbox" class="filtro-turno" value="noite" checked> Noite</label>
@@ -45,10 +45,11 @@
         <thead>
           <tr>
             <th>Hora</th>
-            <th>Dia</th>
-            {% for room in rooms %}
-              <th>{{ room }}</th>
-            {% endfor %}
+            <th>Segunda</th>
+            <th>Terça</th>
+            <th>Quarta</th>
+            <th>Quinta</th>
+            <th>Sexta</th>
           </tr>
         </thead>
         <tbody id="corpo-tabela"></tbody>
@@ -63,6 +64,7 @@
 
   <script>
     const reservas = {{ reservas|tojson }};
+    const rooms = {{ rooms|tojson }};
     let semanaInicio = new Date();
 
     function inicioDaSemana(data) {
@@ -70,19 +72,15 @@
       const dia = d.getDay();
       const diff = d.getDate() - dia + (dia === 0 ? -6 : 1);
       d.setDate(diff);
-      d.setHours(0,0,0,0);
+      d.setHours(0, 0, 0, 0);
       return d;
     }
 
     function toISO(data) {
       const y = data.getFullYear();
-      const m = String(data.getMonth()+1).padStart(2,'0');
-      const d = String(data.getDate()).padStart(2,'0');
+      const m = String(data.getMonth() + 1).padStart(2, '0');
+      const d = String(data.getDate()).padStart(2, '0');
       return `${y}-${m}-${d}`;
-    }
-
-    function nomeDia(data) {
-      return data.toLocaleDateString('pt-BR', { weekday:'short', day:'2-digit', month:'2-digit' });
     }
 
     function turnoDaHora(h) {
@@ -95,63 +93,70 @@
       return Array.from(document.querySelectorAll('.filtro-turno:checked')).map(x => x.value);
     }
 
+    function formatarLabelSemana() {
+      const fim = new Date(semanaInicio);
+      fim.setDate(fim.getDate() + 4);
+      return `${semanaInicio.toLocaleDateString('pt-BR')} até ${fim.toLocaleDateString('pt-BR')}`;
+    }
+
+    function reservasDaCelula(dataISO, hora) {
+      return reservas.filter(r => (
+        r.data === dataISO &&
+        parseInt(r.hora_inicio.split(':')[0], 10) === hora &&
+        rooms.includes(r.local)
+      ));
+    }
+
     function renderTabela() {
       const tbody = document.getElementById('corpo-tabela');
       tbody.innerHTML = '';
       const turnos = getTurnos();
 
-      for (let d = 0; d < 5; d++) {
-        const dia = new Date(semanaInicio);
-        dia.setDate(dia.getDate() + d);
-        const diaISO = toISO(dia);
-        const diaNome = nomeDia(dia);
+      for (let h = 8; h <= 23; h++) {
+        if (!turnos.includes(turnoDaHora(h))) continue;
 
-        for (let h = 8; h <= 23; h++) {
-          if (!turnos.includes(turnoDaHora(h))) continue;
+        const tr = document.createElement('tr');
+        tr.innerHTML = `<th>${h}h</th>`;
 
-          const tr = document.createElement('tr');
-          tr.innerHTML = `<th>${h}h</th><th>${diaNome}</th>`;
+        for (let d = 0; d < 5; d++) {
+          const dia = new Date(semanaInicio);
+          dia.setDate(dia.getDate() + d);
+          const diaISO = toISO(dia);
+          const celulaReservas = reservasDaCelula(diaISO, h);
 
-          {% for room in rooms %}
-            const td = document.createElement('td');
-            td.dataset.room = "{{ room }}";
-            td.dataset.hour = String(h);
+          const td = document.createElement('td');
+          td.classList.add('semana-cell');
 
-            const reserva = reservas.find(r => r.data === diaISO && r.local === "{{ room }}" && parseInt(r.hora_inicio.split(':')[0], 10) === h);
-            if (reserva) {
-              td.classList.add('tem-reserva');
-              td.innerHTML = `<div class="reserva-tag"><strong>${reserva.finalidade}</strong><br>${reserva.hora_inicio} - ${reserva.hora_fim}<br>${reserva.usuario}</div>`;
-            }
-            tr.appendChild(td);
-          {% endfor %}
+          if (celulaReservas.length === 0) {
+            td.innerHTML = '<span class="slot-vazio">-</span>';
+          } else {
+            td.innerHTML = celulaReservas
+              .map(r => `<div class="reserva-tag"><strong>${r.local}</strong> · ${r.finalidade}<br>${r.hora_inicio} - ${r.hora_fim}</div>`)
+              .join('');
+          }
 
-          tbody.appendChild(tr);
+          tr.appendChild(td);
         }
-      }
-    }
 
-    function atualizarTituloSemana() {
-      const fim = new Date(semanaInicio);
-      fim.setDate(fim.getDate() + 4);
-      document.getElementById('semana-atual').textContent = `${semanaInicio.toLocaleDateString('pt-BR')} até ${fim.toLocaleDateString('pt-BR')}`;
+        tbody.appendChild(tr);
+      }
+
+      document.getElementById('semana-atual').textContent = formatarLabelSemana();
     }
 
     document.getElementById('semana-anterior').addEventListener('click', () => {
       semanaInicio.setDate(semanaInicio.getDate() - 7);
-      atualizarTituloSemana();
       renderTabela();
     });
 
     document.getElementById('semana-proximo').addEventListener('click', () => {
       semanaInicio.setDate(semanaInicio.getDate() + 7);
-      atualizarTituloSemana();
       renderTabela();
     });
 
     document.querySelectorAll('.filtro-turno').forEach(chk => chk.addEventListener('change', renderTabela));
 
     semanaInicio = inicioDaSemana(new Date());
-    atualizarTituloSemana();
     renderTabela();
   </script>
 </body>
