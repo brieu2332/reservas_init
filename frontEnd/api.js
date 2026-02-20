@@ -14,10 +14,10 @@ async function handleResponse(response) {
 // AUTENTICAÇÃO
 export async function register(userData) {
   try {
-    const response = await fetch(`${API_URL}/auth/register`, {
+    const response = await fetch(`${API_URL}/cadastro`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(userData)
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: new URLSearchParams(userData)
     });
     return await handleResponse(response);
   } catch (error) {
@@ -27,7 +27,7 @@ export async function register(userData) {
 
 export async function login(email, password) {
   try {
-    const response = await fetch(`${API_URL}/auth/login`, {
+    const response = await fetch(`${API_URL}/api/users/login`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email, password })
@@ -41,14 +41,10 @@ export async function login(email, password) {
 // RESERVA
 export async function bookRoom(bookingData) {
   try {
-    const token = localStorage.getItem('token');
-    if (!token) throw new Error('Usuário não autenticado');
-
-    const response = await fetch(`${API_URL}/bookings`, {
+    const response = await fetch(`${API_URL}/api/reservas/reservations`, {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`
+        'Content-Type': 'application/json'
       },
       body: JSON.stringify(bookingData)
     });

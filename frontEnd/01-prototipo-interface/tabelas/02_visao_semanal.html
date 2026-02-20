@@ -1,102 +1,158 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
-
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Reservas Semanais</title>
-  
+
   <link rel="stylesheet" href="{{ url_for('static', filename='tabelas/02_style.css') }}" />
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
 </head>
 
 <body>
-
   <header>
     <h1>SIRA</h1>
-
-    Reservas:
-    <a href="{{ url_for('diaria') }}">Diária</a> |
-    <a href="{{ url_for('semanal') }}">Semanal</a> |
-    <a href="{{ url_for('listagem') }}">Listagem</a> | 
-    <a href="{{ url_for('reservar') }}">RESERVAR!</a> <br>
-    <a href="{{ url_for('admin') }}">Admin (apenas para usuários com esse papel)</a> |
-    <a href="{{ url_for('primeiro_acesso') }}">Primeiro Acesso</a>
+    <p class="subtitulo">Sistema de Reservas de Ambientes</p>
+    <nav class="navegacao">
+      <a href="{{ url_for('diaria') }}">Diária</a>
+      <a class="ativo" href="{{ url_for('semanal') }}">Semanal</a>
+      <a href="{{ url_for('listagem') }}">Listagem</a>
+      <a href="{{ url_for('reservar') }}">Reservar</a>
+      <a href="{{ url_for('admin') }}">Admin</a>
+      <a href="{{ url_for('primeiro_acesso') }}">Primeiro Acesso</a>
+    </nav>
   </header>
 
+  
   <main>
-    <div class="controle-data">
-      <h2>Visualização Semanal</h2>
-
+    <section class="controle-data">
       <div class="filtros-turno" style="text-align: center; margin-bottom: 20px;">
+        <h2 class="page-title">Visualização Semanal</h2>
         <label><input type="checkbox" class="filtro-turno" value="manha" checked> Manhã</label>
         <label><input type="checkbox" class="filtro-turno" value="tarde" checked> Tarde</label>
         <label><input type="checkbox" class="filtro-turno" value="noite" checked> Noite</label>
       </div>
 
-
       <div class="data-container">
-        <button id="semana-anterior"><i class="fa-solid fa-less-than"></i></button>
+        <button id="semana-anterior" type="button"><i class="fa-solid fa-less-than"></i></button>
         <span id="semana-atual"></span>
-        <button id="semana-proximo"><i class="fa-solid fa-greater-than"></i></button>
+        <button id="semana-proximo" type="button"><i class="fa-solid fa-greater-than"></i></button>
       </div>
-    </div>
+    </section>
 
     <div class="tabela-container">
       <table id="tabela-semanal">
         <thead>
           <tr>
-            <th></th>
-            <th colspan="6">Segunda</th>
-            <th colspan="6">Terça</th>
-            <th colspan="6">Quarta</th>
-            <th colspan="6">Quinta</th>
-            <th colspan="6">Sexta</th>
-          </tr>
-          <tr>
-            <th>Horário</th>
-            <th>A04</th><th>A05</th><th>D04</th><th>D05</th><th>D06</th><th>D07</th>
-            <th>A04</th><th>A05</th><th>D04</th><th>D05</th><th>D06</th><th>D07</th>
-            <th>A04</th><th>A05</th><th>D04</th><th>D05</th><th>D06</th><th>D07</th>
-            <th>A04</th><th>A05</th><th>D04</th><th>D05</th><th>D06</th><th>D07</th>
-            <th>A04</th><th>A05</th><th>D04</th><th>D05</th><th>D06</th><th>D07</th>
+            <th>Hora</th>
+            <th>Dia</th>
+            {% for room in rooms %}
+              <th>{{ room }}</th>
+            {% endfor %}
           </tr>
         </thead>
-        <tbody id="corpo-tabela">
-          <tr>
-            <th>08h</th>
-            <td></td><td></td><td></td><td></td><td></td><td></td>
-            <td></td><td></td><td></td><td></td><td></td><td></td>
-            <td></td><td></td><td></td><td></td><td></td><td></td>
-            <td></td><td></td><td></td><td></td><td></td><td></td>
-            <td></td><td></td><td></td><td></td><td></td><td></td>
-          </tr>
-          <tr><th>09h</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-          <tr><th>10h</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-          <tr><th>11h</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-          <tr><th>12h</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-          <tr><th>13h</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-          <tr><th>14h</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-          <tr><th>15h</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-          <tr><th>16h</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-          <tr><th>17h</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-          <tr><th>18h</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-          <tr><th>19h</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-          <tr><th>20h</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-          <tr><th>21h</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-          <tr><th>22h</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-          <tr><th>23h</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-        </tbody>
+        <tbody id="corpo-tabela"></tbody>
       </table>
-
     </div>
-    <button class="tooltip adicionar-reserva-btn">
-      <i class="fas fa-plus fa-lg"></i>
-      <span class="tooltiptext"><a href="{{ url_for('reservar') }}">Adicionar reserva</a></span>
-    </button>
+
+    <a class="adicionar-reserva-btn" href="{{ url_for('reservar') }}" aria-label="Adicionar reserva">
+      <i class="fas fa-plus"></i>
+      <span>Adicionar reserva</span>
+    </a>
   </main>
 
-  <script src="{{ url_for('static', filename='tabelas/02_script.js') }}"></script>
-</body>
+  <script>
+    const reservas = {{ reservas|tojson }};
+    let semanaInicio = new Date();
 
+    function inicioDaSemana(data) {
+      const d = new Date(data);
+      const dia = d.getDay();
+      const diff = d.getDate() - dia + (dia === 0 ? -6 : 1);
+      d.setDate(diff);
+      d.setHours(0,0,0,0);
+      return d;
+    }
+
+    function toISO(data) {
+      const y = data.getFullYear();
+      const m = String(data.getMonth()+1).padStart(2,'0');
+      const d = String(data.getDate()).padStart(2,'0');
+      return `${y}-${m}-${d}`;
+    }
+
+    function nomeDia(data) {
+      return data.toLocaleDateString('pt-BR', { weekday:'short', day:'2-digit', month:'2-digit' });
+    }
+
+    function turnoDaHora(h) {
+      if (h >= 8 && h <= 12) return 'manha';
+      if (h >= 13 && h <= 17) return 'tarde';
+      return 'noite';
+    }
+
+    function getTurnos() {
+      return Array.from(document.querySelectorAll('.filtro-turno:checked')).map(x => x.value);
+    }
+
+    function renderTabela() {
+      const tbody = document.getElementById('corpo-tabela');
+      tbody.innerHTML = '';
+      const turnos = getTurnos();
+
+      for (let d = 0; d < 5; d++) {
+        const dia = new Date(semanaInicio);
+        dia.setDate(dia.getDate() + d);
+        const diaISO = toISO(dia);
+        const diaNome = nomeDia(dia);
+
+        for (let h = 8; h <= 23; h++) {
+          if (!turnos.includes(turnoDaHora(h))) continue;
+
+          const tr = document.createElement('tr');
+          tr.innerHTML = `<th>${h}h</th><th>${diaNome}</th>`;
+
+          {% for room in rooms %}
+            const td = document.createElement('td');
+            td.dataset.room = "{{ room }}";
+            td.dataset.hour = String(h);
+
+            const reserva = reservas.find(r => r.data === diaISO && r.local === "{{ room }}" && parseInt(r.hora_inicio.split(':')[0], 10) === h);
+            if (reserva) {
+              td.classList.add('tem-reserva');
+              td.innerHTML = `<div class="reserva-tag"><strong>${reserva.finalidade}</strong><br>${reserva.hora_inicio} - ${reserva.hora_fim}<br>${reserva.usuario}</div>`;
+            }
+            tr.appendChild(td);
+          {% endfor %}
+
+          tbody.appendChild(tr);
+        }
+      }
+    }
+
+    function atualizarTituloSemana() {
+      const fim = new Date(semanaInicio);
+      fim.setDate(fim.getDate() + 4);
+      document.getElementById('semana-atual').textContent = `${semanaInicio.toLocaleDateString('pt-BR')} até ${fim.toLocaleDateString('pt-BR')}`;
+    }
+
+    document.getElementById('semana-anterior').addEventListener('click', () => {
+      semanaInicio.setDate(semanaInicio.getDate() - 7);
+      atualizarTituloSemana();
+      renderTabela();
+    });
+
+    document.getElementById('semana-proximo').addEventListener('click', () => {
+      semanaInicio.setDate(semanaInicio.getDate() + 7);
+      atualizarTituloSemana();
+      renderTabela();
+    });
+
+    document.querySelectorAll('.filtro-turno').forEach(chk => chk.addEventListener('change', renderTabela));
+
+    semanaInicio = inicioDaSemana(new Date());
+    atualizarTituloSemana();
+    renderTabela();
+  </script>
+</body>
 </html>

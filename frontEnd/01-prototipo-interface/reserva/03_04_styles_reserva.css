@@ -8,31 +8,44 @@
 body {
   background-color: #f4fdf7;
   color: #1a3d2f;
+  padding: 20px;
 }
 
-nav {
-  background-color: #c4f1d9;
-  padding: 16px;
+.navbar {
+  background: #fff;
+  border-radius: 12px;
+  padding: 18px 20px;
+  margin-bottom: 16px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+}
+
+.nav-buttons {
   display: flex;
-  gap: 16px;
+  flex-wrap: wrap;
+  gap: 12px;
   justify-content: center;
-  border-bottom: 2px solid #b8e4cb;
 }
 
-nav a {
-  text-decoration: none;
+.nav-buttons a {
+  background-color: #d0f0df;
   color: #1a3d2f;
   font-weight: 600;
-  padding: 8px 12px;
-  border-radius: 8px;
-  transition: background 0.2s;
+  text-decoration: none;
+  padding: 10px 16px;
+  border-radius: 12px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+  transition: background-color 0.2s ease-in-out;
+}
+
+.nav-buttons a:hover {
+  background-color: #b7e3c8;
 }
 
 .modal {
   display: flex;
   justify-content: center;
   align-items: center;
-  min-height: 100vh;
+  min-height: calc(100vh - 140px);
   padding: 24px;
 }
 
@@ -40,7 +53,7 @@ nav a {
   background-color: white;
   padding: 32px;
   border-radius: 16px;
-  max-width: 600px;
+  max-width: 700px;
   width: 100%;
   box-shadow: 0 0 24px rgba(0, 0, 0, 0.08);
   display: flex;
@@ -49,7 +62,7 @@ nav a {
 }
 
 h2 {
-  font-size: 1.5rem;
+  font-size: 1.6rem;
   color: #185c3b;
 }
 
@@ -59,9 +72,7 @@ h3 {
   margin-bottom: 4px;
 }
 
-p {
-  font-size: 0.95rem;
-}
+p { font-size: 0.95rem; }
 
 .edit {
   display: grid;
@@ -69,15 +80,14 @@ p {
   gap: 16px;
 }
 
-.setting {
-  display: flex;
-  flex-direction: column;
-}
+.setting { display: flex; flex-direction: column; }
 
 input[type="time"],
+input[type="date"],
 input[list],
+input[type="text"],
 select {
-  padding: 8px;
+  padding: 10px;
   border-radius: 8px;
   border: 1px solid #ccc;
   font-size: 0.95rem;
@@ -89,9 +99,8 @@ select {
   gap: 12px;
 }
 
-.cancelar, 
+.cancelar,
 .salvar,
-
 .apagar {
   padding: 10px 20px;
   font-size: 0.95rem;
@@ -101,53 +110,16 @@ select {
   transition: background 0.2s;
 }
 
-.cancelar {
-  background-color: #ccc;
-  color: #1a1a1a;
-}
+.cancelar { background-color: #ccc; color: #1a1a1a; }
+.cancelar:hover { background-color: #b0b0b0; }
 
-.cancelar:hover {
-  background-color: #b0b0b0;
-}
+.salvar { background-color: #4caf50; color: white; }
+.salvar:hover { background-color: #449d48; }
 
-.salvar {
-  background-color: #4caf50;
-  color: white;
-}
+.apagar { background-color: #e53935; color: white; margin-top: 8px; }
+.apagar:hover { background-color: #c62828; }
 
-.salvar:hover {
-  background-color: #449d48;
-}
-
-.apagar {
-  background-color: #e53935;
-  color: white;
-  margin-top: 8px;
-}
-
-.apagar:hover {
-  background-color: #c62828;
-}
-
-.navbar {
-  background-color: #f1fcf6;
-  padding: 24px 12 16px;
-  text-align: center;
-}
-
-.nav-buttons a {
-  background-color: #d0f0df;
-  color: #185c3b;
-  font-weight: 600;
-  text-decoration: none;
-  padding: 10px 16px;
-  border-radius: 12px;
-  margin: 0 6px;
-  display: inline-block;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-  transition: background-color 0.2s ease-in-out;
-}
-
-.nav-buttons a:hover {
-  background-color: #b7e3c8;
+@media (max-width: 768px) {
+  body { padding: 12px; }
+  .edit { grid-template-columns: 1fr; }
 }

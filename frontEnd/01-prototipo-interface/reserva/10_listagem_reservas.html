@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="pt-br">
-
 <head>
   <meta charset="UTF-8">
   <title>Histórico de Alocações</title>
@@ -8,17 +7,20 @@
 </head>
 
 <body>
+  <header class="header-card">
+    <h1>SIRA</h1>
+    <p class="subtitulo">Sistema de Reservas de Ambientes</p>
+    <nav>
+      <a href="{{ url_for('diaria') }}">Diária</a>
+      <a href="{{ url_for('semanal') }}">Semanal</a>
+      <a class="active-nav" href="{{ url_for('listagem') }}">Listagem</a>
+      <a href="{{ url_for('reservar') }}">Reservar</a>
+      <a href="{{ url_for('admin') }}">Admin</a>
+      <a href="{{ url_for('primeiro_acesso') }}">Primeiro Acesso</a>
+    </nav>
+  </header>
 
   <h2>Histórico de Alocações</h2>
-
-  <nav>
-    <a href="{{ url_for('diaria') }}">Diária</a> 
-    <a href="{{ url_for('semanal') }}">Semanal</a> 
-    <a href="{{ url_for('listagem') }}">Listagem</a> 
-    <a href="{{ url_for('reservar') }}">Reservar</a>
-    <a href="{{ url_for('admin') }}">Admin</a>
-    <a href="{{ url_for('primeiro_acesso') }}">Primeiro Acesso</a>
-  </nav>
 
   <div class="search-bar">
     <label for="searchInput">Pesquisar:</label>
@@ -28,12 +30,12 @@
   <table id="reservas">
     <thead>
       <tr>
-        <th>Data</th>
+        <th>Data da Reserva</th>
         <th>Local</th>
         <th>Horário</th>
         <th>Usuário</th>
         <th>Finalidade</th>
-        <th>Turma</th>
+        <th>Detalhes</th>
       </tr>
     </thead>
     <tbody id="tbody-reservas"></tbody>
@@ -42,12 +44,7 @@
   <div id="pagination" class="pagination"></div>
 
   <script>
-    const reservas = [
-      { data: "05/04/2025", local: "A04", horario: "19:00 - 21:00", usuario: "Professor de Algoritmos", finalidade: "Ministrar aula de algoritmos", turma: "1° fase - superior BCC" },
-      { data: "04/04/2025", local: "D05", horario: "18:00 - 20:00", usuario: "Professor de Introdução à Lógica", finalidade: "Ministrar aula de Introdução à lógica", turma: "1° fase - superior BCC" },
-      { data: "03/04/2025", local: "A05", horario: "20:00 - 22:00", usuario: "Professor de Informática Básica", finalidade: "Utilização de computadores para planilhas", turma: "1° fase - técnico informática" },
-      { data: "02/04/2025", local: "D04", horario: "19:00 - 21:00", usuario: "Professor de POO", finalidade: "Prova", turma: "2º fase - superior BCC" },
-    ];
+    const reservas = {{ dados_banco|tojson }};
 
     const linhasPorPagina = 10;
     let paginaAtual = 1;
@@ -80,7 +77,7 @@
 
       for (let i = 1; i <= totalPaginas; i++) {
         pagDiv.innerHTML += `
-          <a href="#" onclick="mudarPagina(${i})" class="${paginaAtual === i ? 'active' : ''}">${i}</a>`;
+          <a href="#" onclick="mudarPagina(${i}); return false;" class="${paginaAtual === i ? 'active' : ''}">${i}</a>`;
       }
     }
 
@@ -103,7 +100,5 @@
     renderizarTabela();
     criarPaginacao();
   </script>
-
 </body>
-
 </html>
