@@ -20,10 +20,10 @@
       </nav>
     </header>
 
-    
+    <h2 class="page-title">Visualização Diária</h2>
+
     <section class="controle-data">
       <div class="filtros-turno" style="text-align: center; margin-bottom: 20px;">
-        <h2 class="page-title">Visualização Diária</h2>
         <label><input type="checkbox" class="filtro-turno" value="manha" checked> Manhã</label>
         <label><input type="checkbox" class="filtro-turno" value="tarde" checked> Tarde</label>
         <label><input type="checkbox" class="filtro-turno" value="noite" checked> Noite</label>
@@ -45,16 +45,7 @@
           {% endfor %}
         </tr>
       </thead>
-      <tbody id="corpo-tabela">
-        {% for h in range(8,24) %}
-          <tr>
-            <th>{{ h }}h</th>
-            {% for room in rooms %}
-              <td data-room="{{ room }}" data-hour="{{ h }}"></td>
-            {% endfor %}
-          </tr>
-        {% endfor %}
-      </tbody>
+      <tbody id="corpo-tabela"></tbody>
     </table>
 
     <a class="adicionar-reserva-btn" href="{{ url_for('reservar') }}" aria-label="Adicionar reserva">
@@ -65,6 +56,7 @@
     <script>
       let dataAtual = new Date();
       const reservas = {{ reservas|tojson }};
+      const rooms = {{ rooms|tojson }};
 
       function formatarData(data) {
         return data.toLocaleDateString("pt-BR", {
@@ -82,13 +74,6 @@
         return `${ano}-${mes}-${dia}`;
       }
 
-      function limparTabela() {
-        document.querySelectorAll('#corpo-tabela td').forEach(td => {
-          td.innerHTML = '';
-          td.classList.remove('tem-reserva');
-        });
-      }
-
       function turnoDaHora(hora) {
         if (hora >= 8 && hora <= 12) return 'manha';
         if (hora >= 13 && hora <= 17) return 'tarde';
@@ -99,23 +84,60 @@
         return Array.from(document.querySelectorAll('.filtro-turno:checked')).map(x => x.value);
       }
 
-      function carregarReservasDoDia() {
-        limparTabela();
-        const dataISO = formatarISO(dataAtual);
+      function horasVisiveis() {
         const turnos = turnosSelecionados();
+        return Array.from({length: 16}, (_, i) => i + 8).filter(h => turnos.includes(turnoDaHora(h)));
+      }
 
-        reservas
+      function horaInt(hhmm) {
+        return parseInt(hhmm.split(':')[0], 10);
+      }
+
+      function reservasDoDia(dataISO) {
+        return reservas
           .filter(r => r.data === dataISO)
-          .forEach(r => {
-            const hora = parseInt(r.hora_inicio.split(':')[0], 10);
-            if (!turnos.includes(turnoDaHora(hora))) return;
+          .sort((a,b) => a.hora_inicio.localeCompare(b.hora_inicio));
+      }
 
-            const celula = document.querySelector(`td[data-room="${r.local}"][data-hour="${hora}"]`);
-            if (!celula) return;
+      function carregarReservasDoDia() {
+        const tbody = document.getElementById('corpo-tabela');
+        tbody.innerHTML = '';
 
-            celula.classList.add('tem-reserva');
-            celula.innerHTML = `<div class="reserva-tag"><strong>${r.finalidade}</strong><br>${r.hora_inicio} - ${r.hora_fim}<br>${r.usuario}</div>`;
-          });
+        const dataISO = formatarISO(dataAtual);
+        const reservasDia = reservasDoDia(dataISO);
+        const horas = horasVisiveis();
+        const ocupadas = {};
+        rooms.forEach(r => ocupadas[r] = new Set());
+
+        for (const h of horas) {
+          const tr = document.createElement('tr');
+          tr.innerHTML = `<th>${h}h</th>`;
+
+          for (const room of rooms) {
+            if (ocupadas[room].has(h)) continue;
+
+            const reserva = reservasDia.find(r => r.local === room && horaInt(r.hora_inicio) === h);
+            const td = document.createElement('td');
+
+            if (reserva) {
+              const inicio = horaInt(reserva.hora_inicio);
+              const fim = Math.max(inicio + 1, horaInt(reserva.hora_fim));
+              const duracao = Math.max(1, fim - inicio);
+
+              td.rowSpan = duracao;
+              td.classList.add('tem-reserva');
+              td.innerHTML = `<div class="reserva-tag"><strong>${reserva.finalidade}</strong><br>${reserva.hora_inicio} - ${reserva.hora_fim}<br>${reserva.usuario}</div>`;
+
+              for (let k = 1; k < duracao; k++) ocupadas[room].add(h + k);
+            } else {
+              td.innerHTML = '<span class="slot-vazio">-</span>';
+            }
+
+            tr.appendChild(td);
+          }
+
+          tbody.appendChild(tr);
+        }
       }
 
       function atualizarData() {

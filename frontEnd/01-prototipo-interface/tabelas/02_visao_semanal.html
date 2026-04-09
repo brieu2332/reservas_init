@@ -23,7 +23,7 @@
     </nav>
   </header>
 
-  <h2 class="page-title">Visualização Semanal</h2>
+  <h2 class="page-title">Mapa de Ocupação Semanal</h2>
 
   <main>
     <section class="controle-data">
@@ -44,16 +44,24 @@
       <table id="tabela-semanal">
         <thead>
           <tr>
-            <th>Hora</th>
-            <th>Segunda</th>
-            <th>Terça</th>
-            <th>Quarta</th>
-            <th>Quinta</th>
-            <th>Sexta</th>
+            <th>Semana</th>
+            {% for room in rooms %}
+              <th>{{ room }}</th>
+            {% endfor %}
           </tr>
         </thead>
         <tbody id="corpo-tabela"></tbody>
       </table>
+    </div>
+
+    <div class="legenda-calor" aria-label="Legenda de ocupação">
+      <span>Menos</span>
+      <div class="swatch heat-0"></div>
+      <div class="swatch heat-1"></div>
+      <div class="swatch heat-2"></div>
+      <div class="swatch heat-3"></div>
+      <div class="swatch heat-4"></div>
+      <span>Mais</span>
     </div>
 
     <a class="adicionar-reserva-btn" href="{{ url_for('reservar') }}" aria-label="Adicionar reserva">
@@ -99,40 +107,86 @@
       return `${semanaInicio.toLocaleDateString('pt-BR')} até ${fim.toLocaleDateString('pt-BR')}`;
     }
 
-    function reservasDaCelula(dataISO, hora) {
-      return reservas.filter(r => (
-        r.data === dataISO &&
-        parseInt(r.hora_inicio.split(':')[0], 10) === hora &&
-        rooms.includes(r.local)
-      ));
+    function turnoReserva(reserva) {
+      const hora = parseInt(reserva.hora_inicio.split(':')[0], 10);
+      return turnoDaHora(hora);
+    }
+
+    function reservasDaCelula(dataISO, room, turnos) {
+      return reservas
+        .filter(r => (
+          r.data === dataISO &&
+          r.local === room &&
+          turnos.includes(turnoReserva(r))
+        ))
+        .sort((a, b) => a.hora_inicio.localeCompare(b.hora_inicio));
+    }
+
+    function indiceCalor(totalReservas, maxReservas) {
+      if (totalReservas === 0 || maxReservas === 0) return 0;
+      const proporcao = totalReservas / maxReservas;
+      if (proporcao <= 0.25) return 1;
+      if (proporcao <= 0.5) return 2;
+      if (proporcao <= 0.75) return 3;
+      return 4;
+    }
+
+    function mapaSemana(turnos) {
+      const mapa = [];
+      let maxReservas = 0;
+
+      for (let d = 0; d < 5; d++) {
+        const dia = new Date(semanaInicio);
+        dia.setDate(dia.getDate() + d);
+        const diaISO = toISO(dia);
+
+        const linha = {
+          diaNome: ['Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta'][d],
+          diaISO,
+          cells: []
+        };
+
+        for (const room of rooms) {
+          const lista = reservasDaCelula(diaISO, room, turnos);
+          maxReservas = Math.max(maxReservas, lista.length);
+          linha.cells.push({ room, reservas: lista });
+        }
+
+        mapa.push(linha);
+      }
+
+      return { mapa, maxReservas };
     }
 
     function renderTabela() {
       const tbody = document.getElementById('corpo-tabela');
       tbody.innerHTML = '';
       const turnos = getTurnos();
+      const { mapa, maxReservas } = mapaSemana(turnos);
 
-      for (let h = 8; h <= 23; h++) {
-        if (!turnos.includes(turnoDaHora(h))) continue;
-
+      for (const linha of mapa) {
         const tr = document.createElement('tr');
-        tr.innerHTML = `<th>${h}h</th>`;
+        tr.innerHTML = `<th>${linha.diaNome}</th>`;
 
-        for (let d = 0; d < 5; d++) {
-          const dia = new Date(semanaInicio);
-          dia.setDate(dia.getDate() + d);
-          const diaISO = toISO(dia);
-          const celulaReservas = reservasDaCelula(diaISO, h);
-
+        for (const cell of linha.cells) {
           const td = document.createElement('td');
-          td.classList.add('semana-cell');
+          const total = cell.reservas.length;
+          const calor = indiceCalor(total, maxReservas);
 
-          if (celulaReservas.length === 0) {
-            td.innerHTML = '<span class="slot-vazio">-</span>';
+          td.className = `semana-cell heat-${calor}`;
+
+          if (total === 0) {
+            td.innerHTML = '<span class="slot-vazio">Sem reservas</span>';
+            td.title = `${linha.diaNome} · ${cell.room}: sem reservas`;
           } else {
-            td.innerHTML = celulaReservas
-              .map(r => `<div class="reserva-tag"><strong>${r.local}</strong> · ${r.finalidade}<br>${r.hora_inicio} - ${r.hora_fim}</div>`)
-              .join('');
+            const resumo = cell.reservas
+              .slice(0, 2)
+              .map(r => `${r.hora_inicio}-${r.hora_fim} ${r.finalidade}`)
+              .join(' | ');
+            const restante = total > 2 ? `<br><small>+${total - 2} reserva(s)</small>` : '';
+
+            td.innerHTML = `<strong>${total} reserva(s)</strong><br><small>${resumo}</small>${restante}`;
+            td.title = `${linha.diaNome} · ${cell.room}: ${total} reserva(s)`;
           }
 
           tr.appendChild(td);

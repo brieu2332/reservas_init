@@ -64,8 +64,6 @@ nav a:hover {
 }
 
 h2 {
-    display: flex;
-  justify-content: center;
   text-align: left;
   font-size: 1.5rem;
   color: #185c3b;

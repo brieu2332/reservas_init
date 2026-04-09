@@ -77,8 +77,6 @@ header h1 {
 }
 
 h2 {
-  display: flex;
-  justify-content: center;
   margin-top: 0;
   margin-bottom: 14px;
   color: var(--verde-principal);
