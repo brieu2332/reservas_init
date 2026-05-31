@@ -1,0 +1,24 @@
+
+class DuplicateRoomError(Exception):
+    """
+    Exceção lançada quando se tenta criar uma sala
+    com um nome que já existe no banco de dados.
+    """
+    def __init__(self, message: str):
+        super().__init__(message)
+
+class DuplicateEmailError(Exception):
+    """Exceção para quando um email já está cadastrado"""
+    pass
+
+class BookingConflictError(Exception):
+    """Exceção para quando uma reserva conflita com um horário existente."""
+    pass
+
+class PermissionError(Exception):
+    """Exceção para quando um usuário não tem permissão para uma ação."""
+    pass
+
+class NotFoundError(Exception):
+    """Exceção para quando um recurso não é encontrado no banco de dados."""
+    pass
